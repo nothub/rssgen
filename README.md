@@ -78,4 +78,4 @@ Produces the following output:
 
 ---
 
-RSS 2.0 specification: [validator.w3.org/feed/docs/rss2.html](https://validator.w3.org/feed/docs/rss2.html) [cyber.harvard.edu/rss/rss.html](https://cyber.harvard.edu/rss/rss.html)
+[RSS 2.0 specification](https://validator.w3.org/feed/docs/rss2.html) ([mirror](https://www.rssboard.org/rss-specification), [mirror](https://cyber.harvard.edu/rss/rss.html))
