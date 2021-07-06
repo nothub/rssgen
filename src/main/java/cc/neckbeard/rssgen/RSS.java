@@ -17,7 +17,7 @@ import java.time.Instant;
 import java.util.Arrays;
 
 /**
- * Implements Really Simple Syndication (RSS) 2.0 <a href="https://validator.w3.org/feed/docs/rss2.html">specification</a> (<a href="https://cyber.harvard.edu/rss/rss.html">mirror</a>).
+ * Implements Really Simple Syndication (RSS) 2.0 <a href="https://validator.w3.org/feed/docs/rss2.html">specification</a> (<a href="https://www.rssboard.org/rss-specification">mirror</a>, <a href="https://cyber.harvard.edu/rss/rss.html">mirror</a>).
  * <p>
  * RSS date format is RFC822, implemented as {@link RSS.Date}.
  * RSS 2.0 does not implement content length restrictions. Nevertheless practically, content maximum length is determined by the runtimes maximum string length.
