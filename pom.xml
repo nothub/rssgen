@@ -8,14 +8,14 @@
   <artifactId>rssgen</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
-  <name>${project.artifactId}</name>
+  <name>${project.groupId}:${project.artifactId}</name>
   <description>A generator for RSS 2.0 conform xml files.</description>
   <url>https://github.com/nothub/rssgen</url>
 
   <licenses>
     <license>
       <name>MIT License</name>
-      <url>https://mit-license.org/</url>
+      <url>https://www.opensource.org/licenses/mit-license.php</url>
     </license>
   </licenses>
 
