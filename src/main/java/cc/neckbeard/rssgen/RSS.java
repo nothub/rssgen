@@ -12,12 +12,15 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Implements Really Simple Syndication (RSS) 2.0 <a href="https://validator.w3.org/feed/docs/rss2.html">specification</a> (<a href="https://www.rssboard.org/rss-specification">mirror</a>, <a href="https://cyber.harvard.edu/rss/rss.html">mirror</a>).
@@ -32,6 +35,7 @@ public class RSS {
 
     // http://backend.userland.com/discuss/msgReader$16
     public static final Set<String> LANGUAGE_IDS = new HashSet<>();
+
     static {
         LANGUAGE_IDS.addAll(Arrays.asList(Locale.getISOLanguages()));
         LANGUAGE_IDS.addAll(Set.of("af", "sq", "eu", "be", "bg", "ca", "zh-cn", "zh-tw", "hr", "cs", "da", "nl", "nl-be", "nl-nl", "en", "en-au", "en-bz", "en-ca", "en-ie", "en-jm", "en-nz", "en-ph", "en-za", "en-tt", "en-gb", "en-us", "en-zw", "et", "fo", "fi", "fr", "fr-be", "fr-ca", "fr-fr", "fr-lu", "fr-mc", "fr-ch", "gl", "gd", "de", "de-at", "de-de", "de-li", "de-lu", "de-ch", "el", "haw", "hu", "is", "in", "ga", "it", "it-it", "it-ch", "ja", "ko", "mk", "no", "pl", "pt", "pt-br", "pt-pt", "ro", "ro-mo", "ro-ro", "ru", "ru-mo", "ru-ru", "sr", "sk", "sl", "es", "es-ar", "es-bo", "es-cl", "es-co", "es-cr", "es-do", "es-ec", "es-sv", "es-gt", "es-hn", "es-mx", "es-ni", "es-pa", "es-py", "es-pe", "es-pr", "es-es", "es-uy", "es-ve", "sv", "sv-fi", "sv-se", "tr", "uk"));
@@ -61,6 +65,15 @@ public class RSS {
     private static Node getFirstNode(String title, Element parent) {
         final var nodes = parent.getElementsByTagName(title);
         return nodes.getLength() > 0 ? nodes.item(0) : null;
+    }
+
+    private static boolean containsDuplicates(Object[] arr) {
+        try {
+            if (Set.of(arr).size() != arr.length) return true;
+        } catch (IllegalArgumentException ignored) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -205,7 +218,8 @@ public class RSS {
          * @return RSS builder
          */
         public Builder language(String value) {
-            if (!LANGUAGE_IDS.contains(value)) throw new IllegalArgumentException("Not a valid language id.");
+            if (!LANGUAGE_IDS.contains(value))
+                throw new IllegalArgumentException("Not a valid language id. Allowed values: " + String.join(", ", LANGUAGE_IDS));
             appendChild("language", value, channel, doc);
             return this;
         }
@@ -467,9 +481,18 @@ public class RSS {
          * @return RSS builder
          */
         public Builder skipHours(Integer... values) {
+            if (values.length > 24) throw new IllegalArgumentException("Maximum 24 hours allowed.");
+            if (containsDuplicates(values)) throw new IllegalArgumentException("Values must be unique.");
             var element = doc.createElement("skipHours");
             Arrays
                 .stream(values)
+                .filter(hour -> {
+                    if (IntStream.range(0, 24).anyMatch(i -> i == hour)) {
+                        return true;
+                    } else {
+                        throw new IllegalArgumentException("Invalid hour value. Allowed values: " + IntStream.range(0, 24).mapToObj(String::valueOf).collect(Collectors.joining(", ")));
+                    }
+                })
                 .map(String::valueOf)
                 .forEach(hour -> appendChild("hour", hour, element, doc));
             channel.appendChild(element);
@@ -494,9 +517,21 @@ public class RSS {
          * @return RSS builder
          */
         public Builder skipDays(String... values) {
+            if (values.length > 7) throw new IllegalArgumentException("Maximum 7 days allowed.");
+            if (containsDuplicates(values)) throw new IllegalArgumentException("Values must be unique.");
             var element = doc.createElement("skipDays");
             Arrays
                 .stream(values)
+                .filter(day -> {
+                    if (Arrays.asList(DateFormatSymbols.getInstance(Locale.US).getWeekdays()).contains(day)) {
+                        return true;
+                    } else {
+                        throw new IllegalArgumentException("Invalid day value. Allowed values: "
+                            + Arrays.stream(DateFormatSymbols.getInstance(Locale.US).getWeekdays())
+                            .filter(s -> !s.isEmpty()) // cause there is actually an empty string in that array lol
+                            .collect(Collectors.joining(", ")));
+                    }
+                })
                 .forEach(day -> appendChild("day", day, element, doc));
             channel.appendChild(element);
             return this;
@@ -510,7 +545,7 @@ public class RSS {
         public RSS build() throws IllegalArgumentException {
             RSS rss = new RSS(doc, channel);
             if (!this.containsTitle || !this.containsLink || !this.containsDescription) {
-                throw new IllegalArgumentException("title, link and description are required channel elements");
+                throw new IllegalArgumentException("All of title, link and description are required channel elements.");
             }
             if (image != null) {
                 // default width
@@ -730,7 +765,7 @@ public class RSS {
          */
         public void build() throws IllegalArgumentException {
             if (!this.containsTitle && !this.containsDescription) {
-                throw new IllegalArgumentException("title or description are required item elements");
+                throw new IllegalArgumentException("One of title or description are required item elements");
             }
             channel.appendChild(item);
         }
