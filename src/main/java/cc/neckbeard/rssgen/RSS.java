@@ -1,8 +1,6 @@
 package cc.neckbeard.rssgen;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,15 +28,18 @@ import java.util.stream.IntStream;
  * <p>
  * Rest in peace Aaron Swartz.
  */
-@SuppressWarnings("ClassCanBeRecord") // has visibility side effects (exposing xml to user)
 public class RSS {
 
-    // http://backend.userland.com/discuss/msgReader$16
+    /**
+     * This set contains all valid language values defined in: <a href="http://backend.userland.com/discuss/msgReader$16">Allowable values for language in RSS</a>
+     * <p>
+     * Additionally, contains all 2-letter language codes defined in ISO639 (all language codes defined by the W3C are explicitly valid RSS language codes).
+     */
     public static final Set<String> LANGUAGE_IDS = new HashSet<>();
 
     static {
         LANGUAGE_IDS.addAll(Arrays.asList(Locale.getISOLanguages()));
-        LANGUAGE_IDS.addAll(Set.of("af", "sq", "eu", "be", "bg", "ca", "zh-cn", "zh-tw", "hr", "cs", "da", "nl", "nl-be", "nl-nl", "en", "en-au", "en-bz", "en-ca", "en-ie", "en-jm", "en-nz", "en-ph", "en-za", "en-tt", "en-gb", "en-us", "en-zw", "et", "fo", "fi", "fr", "fr-be", "fr-ca", "fr-fr", "fr-lu", "fr-mc", "fr-ch", "gl", "gd", "de", "de-at", "de-de", "de-li", "de-lu", "de-ch", "el", "haw", "hu", "is", "in", "ga", "it", "it-it", "it-ch", "ja", "ko", "mk", "no", "pl", "pt", "pt-br", "pt-pt", "ro", "ro-mo", "ro-ro", "ru", "ru-mo", "ru-ru", "sr", "sk", "sl", "es", "es-ar", "es-bo", "es-cl", "es-co", "es-cr", "es-do", "es-ec", "es-sv", "es-gt", "es-hn", "es-mx", "es-ni", "es-pa", "es-py", "es-pe", "es-pr", "es-es", "es-uy", "es-ve", "sv", "sv-fi", "sv-se", "tr", "uk"));
+        LANGUAGE_IDS.addAll(new HashSet<>(Arrays.asList("af", "sq", "eu", "be", "bg", "ca", "zh-cn", "zh-tw", "hr", "cs", "da", "nl", "nl-be", "nl-nl", "en", "en-au", "en-bz", "en-ca", "en-ie", "en-jm", "en-nz", "en-ph", "en-za", "en-tt", "en-gb", "en-us", "en-zw", "et", "fo", "fi", "fr", "fr-be", "fr-ca", "fr-fr", "fr-lu", "fr-mc", "fr-ch", "gl", "gd", "de", "de-at", "de-de", "de-li", "de-lu", "de-ch", "el", "haw", "hu", "is", "in", "ga", "it", "it-it", "it-ch", "ja", "ko", "mk", "no", "pl", "pt", "pt-br", "pt-pt", "ro", "ro-mo", "ro-ro", "ru", "ru-mo", "ru-ru", "sr", "sk", "sl", "es", "es-ar", "es-bo", "es-cl", "es-co", "es-cr", "es-do", "es-ec", "es-sv", "es-gt", "es-hn", "es-mx", "es-ni", "es-pa", "es-py", "es-pe", "es-pr", "es-es", "es-uy", "es-ve", "sv", "sv-fi", "sv-se", "tr", "uk")));
     }
 
     private final Document doc;
@@ -50,26 +51,26 @@ public class RSS {
     }
 
     private static Element appendChild(String title, String content, Element parent, Document doc) {
-        var element = doc.createElement(title);
+        Element element = doc.createElement(title);
         element.appendChild(doc.createTextNode(content));
         parent.appendChild(element);
         return element;
     }
 
     private static void appendAttribute(String title, String value, Element parent, Document doc) {
-        var attribute = doc.createAttribute(title);
+        Attr attribute = doc.createAttribute(title);
         attribute.setValue(value);
         parent.setAttributeNode(attribute);
     }
 
     private static Node getFirstNode(String title, Element parent) {
-        final var nodes = parent.getElementsByTagName(title);
+        final NodeList nodes = parent.getElementsByTagName(title);
         return nodes.getLength() > 0 ? nodes.item(0) : null;
     }
 
     private static boolean containsDuplicates(Object[] arr) {
         try {
-            if (Set.of(arr).size() != arr.length) return true;
+            if (new HashSet<>(Arrays.asList(arr)).size() != arr.length) return true;
         } catch (IllegalArgumentException ignored) {
             return true;
         }
@@ -149,10 +150,10 @@ public class RSS {
             }
             doc.setXmlStandalone(true);
 
-            var rss = doc.createElement("rss");
+            Element rss = doc.createElement("rss");
             doc.appendChild(rss);
 
-            var rssVersion = doc.createAttribute("version");
+            Attr rssVersion = doc.createAttribute("version");
             rssVersion.setValue("2.0");
             rss.setAttributeNode(rssVersion);
 
@@ -210,7 +211,7 @@ public class RSS {
          * The language the channel is written in.
          * <p>
          * This allows aggregators to group all Italian language sites, for example, on a single page.
-         * A list of allowable values for this element, as provided by Netscape, is <a href="http://backend.userland.com/stories/storyReader$16">here</a>.
+         * A list of allowable values for this element, as provided by Netscape, is <a href="http://backend.userland.com/discuss/msgReader$16">here</a>.
          * <p>
          * You may also use <a href="http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes">values defined</a> by the W3C.
          *
@@ -297,7 +298,7 @@ public class RSS {
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
          */
         public Builder category(String value, String domain) {
-            var element = appendChild("category", value, channel, doc);
+            Element element = appendChild("category", value, channel, doc);
             if (domain != null) {
                 appendAttribute("domain", domain, element, doc);
             }
@@ -365,7 +366,7 @@ public class RSS {
          * @see <a href="https://cyber.harvard.edu/rss/soapMeetsRss.html">SOAP Meets RSS</a>
          */
         public Builder cloud(URI domain, Integer port, String path, String registerProcedure, String protocol) {
-            var element = doc.createElement("cloud");
+            Element element = doc.createElement("cloud");
             appendAttribute("domain", domain.toString(), element, doc);
             appendAttribute("port", String.valueOf(port), element, doc);
             appendAttribute("path", path, element, doc);
@@ -461,7 +462,7 @@ public class RSS {
          * @return RSS builder
          */
         public Builder textInput(String title, String description, String name, URL link) {
-            var element = doc.createElement("textInput");
+            Element element = doc.createElement("textInput");
             appendAttribute("title", title, element, doc);
             appendAttribute("description", description, element, doc);
             appendAttribute("name", name, element, doc);
@@ -483,7 +484,7 @@ public class RSS {
         public Builder skipHours(Integer... values) {
             if (values.length > 24) throw new IllegalArgumentException("Maximum 24 hours allowed.");
             if (containsDuplicates(values)) throw new IllegalArgumentException("Values must be unique.");
-            var element = doc.createElement("skipHours");
+            Element element = doc.createElement("skipHours");
             Arrays
                 .stream(values)
                 .filter(hour -> {
@@ -519,7 +520,7 @@ public class RSS {
         public Builder skipDays(String... values) {
             if (values.length > 7) throw new IllegalArgumentException("Maximum 7 days allowed.");
             if (containsDuplicates(values)) throw new IllegalArgumentException("Values must be unique.");
-            var element = doc.createElement("skipDays");
+            Element element = doc.createElement("skipDays");
             Arrays
                 .stream(values)
                 .filter(day -> {
@@ -647,7 +648,7 @@ public class RSS {
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
          */
         public Item category(String value, String domain) {
-            var element = appendChild("category", value, item, doc);
+            Element element = appendChild("category", value, item, doc);
             if (domain != null) {
                 appendAttribute("domain", domain, element, doc);
             }
@@ -701,7 +702,7 @@ public class RSS {
          * @return Item builder
          */
         public Item enclosure(URL url, Integer length, String type) {
-            var element = doc.createElement("enclosure");
+            Element element = doc.createElement("enclosure");
             appendAttribute("url", url.toString(), element, doc);
             appendAttribute("length", String.valueOf(length), element, doc);
             appendAttribute("type", type, element, doc);
@@ -727,7 +728,7 @@ public class RSS {
          * @return Item builder
          */
         public Item guid(String value, boolean isPermaLink) {
-            var element = appendChild("guid", value, item, doc);
+            Element element = appendChild("guid", value, item, doc);
             if (isPermaLink) {
                 appendAttribute("isPermaLink", String.valueOf(true), element, doc);
             }
@@ -753,7 +754,7 @@ public class RSS {
          * @return Item builder
          */
         public Item source(String value, URL url) {
-            var element = appendChild("source", value, item, doc);
+            Element element = appendChild("source", value, item, doc);
             appendAttribute("url", url.toString(), element, doc);
             return this;
         }

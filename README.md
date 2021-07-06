@@ -1,6 +1,6 @@
 # rssgen
 
-[![maven central](https://maven-badges.herokuapp.com/maven-central/cc.neckbeard/rssgen/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cc.neckbeard/rssgen) [![LGTM](https://img.shields.io/lgtm/grade/java/github/nothub/rssgen?label=code%20quality&logo=lgtm)](https://lgtm.com/projects/g/nothub/rssgen)
+[![maven central](https://maven-badges.herokuapp.com/maven-central/cc.neckbeard/rssgen/badge.svg)](https://search.maven.org/artifact/cc.neckbeard/rssgen) [![LGTM](https://img.shields.io/lgtm/grade/java/github/nothub/rssgen?label=code%20quality&logo=lgtm)](https://lgtm.com/projects/g/nothub/rssgen)
 
 A generator for RSS 2.0 conform xml files.
 
