@@ -15,6 +15,9 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Implements Really Simple Syndication (RSS) 2.0 <a href="https://validator.w3.org/feed/docs/rss2.html">specification</a> (<a href="https://www.rssboard.org/rss-specification">mirror</a>, <a href="https://cyber.harvard.edu/rss/rss.html">mirror</a>).
@@ -26,6 +29,13 @@ import java.util.Arrays;
  */
 @SuppressWarnings("ClassCanBeRecord") // has visibility side effects (exposing xml to user)
 public class RSS {
+
+    // http://backend.userland.com/discuss/msgReader$16
+    public static final Set<String> LANGUAGE_IDS = new HashSet<>();
+    static {
+        LANGUAGE_IDS.addAll(Arrays.asList(Locale.getISOLanguages()));
+        LANGUAGE_IDS.addAll(Set.of("af", "sq", "eu", "be", "bg", "ca", "zh-cn", "zh-tw", "hr", "cs", "da", "nl", "nl-be", "nl-nl", "en", "en-au", "en-bz", "en-ca", "en-ie", "en-jm", "en-nz", "en-ph", "en-za", "en-tt", "en-gb", "en-us", "en-zw", "et", "fo", "fi", "fr", "fr-be", "fr-ca", "fr-fr", "fr-lu", "fr-mc", "fr-ch", "gl", "gd", "de", "de-at", "de-de", "de-li", "de-lu", "de-ch", "el", "haw", "hu", "is", "in", "ga", "it", "it-it", "it-ch", "ja", "ko", "mk", "no", "pl", "pt", "pt-br", "pt-pt", "ro", "ro-mo", "ro-ro", "ru", "ru-mo", "ru-ru", "sr", "sk", "sl", "es", "es-ar", "es-bo", "es-cl", "es-co", "es-cr", "es-do", "es-ec", "es-sv", "es-gt", "es-hn", "es-mx", "es-ni", "es-pa", "es-py", "es-pe", "es-pr", "es-es", "es-uy", "es-ve", "sv", "sv-fi", "sv-se", "tr", "uk"));
+    }
 
     private final Document doc;
     private final Element channel;
@@ -195,6 +205,7 @@ public class RSS {
          * @return RSS builder
          */
         public Builder language(String value) {
+            if (!LANGUAGE_IDS.contains(value)) throw new IllegalArgumentException("Not a valid language id.");
             appendChild("language", value, channel, doc);
             return this;
         }
