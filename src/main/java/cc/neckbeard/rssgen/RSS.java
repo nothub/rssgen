@@ -54,7 +54,11 @@ public class RSS {
     }
 
     /**
-     * Returns a new Item Builder instance
+     * Returns a new Item builder instance.
+     * <p>
+     * The Item will automatically be attached to the feed, when {@link Item#build()} is invoked.
+     *
+     * @return Item builder
      */
     public Item addItem() {
         return new Item(doc, channel);
@@ -62,6 +66,8 @@ public class RSS {
 
     /**
      * Write rss file to disk.
+     *
+     * @param file target file
      */
     public void writeFile(File file) {
         writeFile(file, 0);
@@ -70,6 +76,7 @@ public class RSS {
     /**
      * Write rss file to disk.
      *
+     * @param file   target file
      * @param indent level of indentation (*2)
      */
     public void writeFile(File file, int indent) {
@@ -132,7 +139,9 @@ public class RSS {
         }
 
         /**
-         * Returns a new Builder instance
+         * Returns a new {@link RSS} builder instance.
+         *
+         * @return RSS builder
          */
         public static Builder getInstance() {
             return new Builder();
@@ -140,6 +149,9 @@ public class RSS {
 
         /**
          * The name of the channel. It's how people refer to your service. If you have an HTML website that contains the same information as your RSS file, the title of your channel should be the same as the title of your website.
+         *
+         * @param value feed title
+         * @return RSS builder
          */
         public Builder title(String value) {
             appendChild("title", value, channel, doc);
@@ -149,6 +161,9 @@ public class RSS {
 
         /**
          * The URL to the HTML website corresponding to the channel.
+         *
+         * @param value website url
+         * @return RSS builder
          */
         public Builder link(URL value) {
             appendChild("link", value.toString(), channel, doc);
@@ -158,6 +173,9 @@ public class RSS {
 
         /**
          * Phrase or sentence describing the channel.
+         *
+         * @param value scription
+         * @return RSS builder
          */
         public Builder description(String value) {
             appendChild("description", value, channel, doc);
@@ -172,6 +190,9 @@ public class RSS {
          * A list of allowable values for this element, as provided by Netscape, is <a href="http://backend.userland.com/stories/storyReader$16">here</a>.
          * <p>
          * You may also use <a href="http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes">values defined</a> by the W3C.
+         *
+         * @param value language id
+         * @return RSS builder
          */
         public Builder language(String value) {
             appendChild("language", value, channel, doc);
@@ -180,6 +201,9 @@ public class RSS {
 
         /**
          * Copyright notice for content in the channel.
+         *
+         * @param value copyright notice
+         * @return RSS builder
          */
         public Builder copyright(String value) {
             appendChild("copyright", value, channel, doc);
@@ -188,6 +212,9 @@ public class RSS {
 
         /**
          * Email address for person responsible for editorial content.
+         *
+         * @param value email address
+         * @return RSS builder
          */
         public Builder managingEditor(String value) {
             appendChild("managingEditor", value, channel, doc);
@@ -196,6 +223,9 @@ public class RSS {
 
         /**
          * Email address for person responsible for technical issues relating to channel.
+         *
+         * @param value email address
+         * @return RSS builder
          */
         public Builder webMaster(String value) {
             appendChild("webMaster", value, channel, doc);
@@ -211,6 +241,9 @@ public class RSS {
          * <p>
          * All date-times in RSS conform to the Date and Time Specification of <a href="http://asg.web.cmu.edu/rfc/rfc822.html">RFC 822</a>,
          * with the exception that the year may be expressed with two characters or four characters (four preferred).
+         *
+         * @param value rfc822 date
+         * @return RSS builder
          */
         public Builder pubDate(Date value) {
             appendChild("pubDate", value.rfc822, channel, doc);
@@ -219,6 +252,9 @@ public class RSS {
 
         /**
          * The last time the content of the channel changed.
+         *
+         * @param value rfc822 date
+         * @return RSS builder
          */
         public Builder lastBuildDate(Date value) {
             appendChild("lastBuildDate", value.rfc822, channel, doc);
@@ -228,6 +264,9 @@ public class RSS {
         /**
          * Specify one or more categories that the channel belongs to. Follows the same rules as the item category.
          *
+         * @param value  category
+         * @param domain category domain
+         * @return RSS builder
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
@@ -243,6 +282,9 @@ public class RSS {
         /**
          * Specify one or more categories that the channel belongs to. Follows the same rules as the item category.
          *
+         * @param value  category url
+         * @param domain category domain url
+         * @return RSS builder
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
@@ -254,6 +296,8 @@ public class RSS {
         /**
          * Specify one or more categories that the channel belongs to. Follows the same rules as the item category.
          *
+         * @param value category
+         * @return RSS builder
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
@@ -266,6 +310,9 @@ public class RSS {
          * A URL that points to the documentation for the format used in the RSS file.
          * It's probably a pointer to this page.
          * It's for people who might stumble across an RSS file on a Web server 25 years from now and wonder what it is.
+         *
+         * @param value url
+         * @return RSS builder
          */
         public Builder docs(URL value) {
             appendChild("docs", value.toString(), channel, doc);
@@ -284,6 +331,12 @@ public class RSS {
          * </ul>
          * <p>
          *
+         * @param domain            cloud url
+         * @param port              cloud port
+         * @param path              cloud path
+         * @param registerProcedure cloud registration procedure
+         * @param protocol          cloud protocol
+         * @return RSS builder
          * @see <a href="https://cyber.harvard.edu/rss/soapMeetsRss.html">SOAP Meets RSS</a>
          */
         public Builder cloud(URI domain, Integer port, String path, String registerProcedure, String protocol) {
@@ -299,6 +352,9 @@ public class RSS {
 
         /**
          * Minutes until consumer cache invalidation.
+         *
+         * @param value minutes
+         * @return RSS builder
          */
         public Builder ttl(Integer value) {
             appendChild("ttl", String.valueOf(value), channel, doc);
@@ -307,6 +363,11 @@ public class RSS {
 
         /**
          * GIF, JPEG or PNG image that can be displayed with the channel.
+         *
+         * @param url   image url
+         * @param title image title
+         * @param link  target link
+         * @return RSS builder
          */
         public Builder image(URL url, String title, URL link) {
             if (image == null) image = doc.createElement("image");
@@ -323,6 +384,8 @@ public class RSS {
          * <p>
          * Image must be defined prio to this operation.
          *
+         * @param value image width
+         * @return RSS builder
          * @see cc.neckbeard.rssgen.RSS.Builder#image(URL, String, URL)
          */
         public Builder imageWidth(Integer value) throws IllegalArgumentException {
@@ -339,6 +402,8 @@ public class RSS {
          * <p>
          * Image must be defined prio to this operation.
          *
+         * @param value image height
+         * @return RSS builder
          * @see cc.neckbeard.rssgen.RSS.Builder#image(URL, String, URL)
          */
         public Builder imageHeight(Integer value) throws IllegalArgumentException {
@@ -353,6 +418,8 @@ public class RSS {
          * <p>
          * Image must be defined prio to this operation.
          *
+         * @param value image description
+         * @return RSS builder
          * @see cc.neckbeard.rssgen.RSS.Builder#image(URL, String, URL)
          */
         public Builder imageDescription(String value) throws IllegalArgumentException {
@@ -361,6 +428,13 @@ public class RSS {
             return this;
         }
 
+        /**
+         * @param title       text titel
+         * @param description text description
+         * @param name        text name
+         * @param link        text link
+         * @return RSS builder
+         */
         public Builder textInput(String title, String description, String name, URL link) {
             var element = doc.createElement("textInput");
             appendAttribute("title", title, element, doc);
@@ -377,6 +451,9 @@ public class RSS {
          * Aggregators, if they support the feature, may not read the channel during listed hours.
          * <p>
          * The hour beginning at midnight is hour zero.
+         *
+         * @param values up to 24 hours
+         * @return RSS builder
          */
         public Builder skipHours(Integer... values) {
             var element = doc.createElement("skipHours");
@@ -390,7 +467,6 @@ public class RSS {
 
         /**
          * Up to seven String values:
-         * <p>
          * <ul>
          * <li>Monday</li>
          * <li>Tuesday</li>
@@ -402,6 +478,9 @@ public class RSS {
          * </ul>
          * <p>
          * Aggregators, if they support the feature, may not read the channel during listed days.
+         *
+         * @param values up to 7 days
+         * @return RSS builder
          */
         public Builder skipDays(String... values) {
             var element = doc.createElement("skipDays");
@@ -414,6 +493,8 @@ public class RSS {
 
         /**
          * Creates and validates the RSS object.
+         *
+         * @return RSS object
          */
         public RSS build() throws IllegalArgumentException {
             RSS rss = new RSS(doc, channel);
@@ -464,6 +545,7 @@ public class RSS {
         /**
          * The title of the item.
          * At least one of title or description must be present.
+         *
          * @param value title
          * @return Item builder
          */
@@ -475,6 +557,7 @@ public class RSS {
 
         /**
          * The URL of the item.
+         *
          * @param value url
          * @return Item builder
          */
@@ -486,6 +569,7 @@ public class RSS {
         /**
          * The item synopsis.
          * At least one of title or description must be present.
+         *
          * @param value synopsis
          * @return Item builder
          */
@@ -497,6 +581,7 @@ public class RSS {
 
         /**
          * Email address of the author of the item.
+         *
          * @param value email address
          * @return Item builder
          */
@@ -508,10 +593,12 @@ public class RSS {
         /**
          * Specify one or more categories that the channel belongs to. Follows the same rules as the channel category.
          *
+         * @param value  category
+         * @param domain category domain
+         * @return Item builder
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
-         * @return Item builder
          */
         public Item category(String value, String domain) {
             var element = appendChild("category", value, item, doc);
@@ -524,10 +611,12 @@ public class RSS {
         /**
          * Specify one or more categories that the channel belongs to. Follows the same rules as the channel category.
          *
+         * @param value  category
+         * @param domain category domain url
+         * @return Item builder
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
-         * @return Item builder
          */
         public Item category(String value, URL domain) {
             return category(value, domain.toString());
@@ -536,10 +625,11 @@ public class RSS {
         /**
          * Specify one or more categories that the channel belongs to. Follows the same rules as the channel category.
          *
+         * @param value category
+         * @return Item builder
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
-         * @return Item builder
          */
         public Item category(String value) {
             return category(value, (String) null);
@@ -547,6 +637,7 @@ public class RSS {
 
         /**
          * URL of a page for comments relating to the item.
+         *
          * @param value url
          * @return Item builder
          */
@@ -558,9 +649,9 @@ public class RSS {
         /**
          * Describes a media object that is attached to the item.
          *
-         * @param url url to media file
+         * @param url    url to media file
          * @param length content length
-         * @param type MIME type
+         * @param type   MIME type
          * @return Item builder
          */
         public Item enclosure(URL url, Integer length, String type) {
@@ -574,6 +665,7 @@ public class RSS {
 
         /**
          * A URL that uniquely identifies the item.
+         *
          * @param value url
          * @return Item builder
          */
@@ -584,7 +676,7 @@ public class RSS {
         /**
          * A string that uniquely identifies the item.
          *
-         * @param value unique identifier
+         * @param value       unique identifier
          * @param isPermaLink if true, value is an url
          * @return Item builder
          */
@@ -611,7 +703,7 @@ public class RSS {
          * The RSS channel that the item came from.
          *
          * @param value name of source
-         * @param url url to source rss feed
+         * @param url   url to source rss feed
          * @return Item builder
          */
         public Item source(String value, URL url) {
@@ -621,7 +713,9 @@ public class RSS {
         }
 
         /**
-         * Creates and validates the Item object.
+         * Creates validates and appends the Item to the RSS feed.
+         *
+         * @throws IllegalArgumentException on missing title or description
          */
         public void build() throws IllegalArgumentException {
             if (!this.containsTitle && !this.containsDescription) {
