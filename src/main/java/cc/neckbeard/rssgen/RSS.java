@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -34,12 +35,15 @@ import java.util.stream.IntStream;
 public class RSS {
 
     // http://backend.userland.com/discuss/msgReader$16
-    public static final Set<String> LANGUAGE_IDS = new HashSet<>();
+    private static final Set<String> languageIds = new HashSet<>();
 
     static {
-        LANGUAGE_IDS.addAll(Arrays.asList(Locale.getISOLanguages()));
-        LANGUAGE_IDS.addAll(Set.of("af", "sq", "eu", "be", "bg", "ca", "zh-cn", "zh-tw", "hr", "cs", "da", "nl", "nl-be", "nl-nl", "en", "en-au", "en-bz", "en-ca", "en-ie", "en-jm", "en-nz", "en-ph", "en-za", "en-tt", "en-gb", "en-us", "en-zw", "et", "fo", "fi", "fr", "fr-be", "fr-ca", "fr-fr", "fr-lu", "fr-mc", "fr-ch", "gl", "gd", "de", "de-at", "de-de", "de-li", "de-lu", "de-ch", "el", "haw", "hu", "is", "in", "ga", "it", "it-it", "it-ch", "ja", "ko", "mk", "no", "pl", "pt", "pt-br", "pt-pt", "ro", "ro-mo", "ro-ro", "ru", "ru-mo", "ru-ru", "sr", "sk", "sl", "es", "es-ar", "es-bo", "es-cl", "es-co", "es-cr", "es-do", "es-ec", "es-sv", "es-gt", "es-hn", "es-mx", "es-ni", "es-pa", "es-py", "es-pe", "es-pr", "es-es", "es-uy", "es-ve", "sv", "sv-fi", "sv-se", "tr", "uk"));
+        languageIds.addAll(Arrays.asList(Locale.getISOLanguages()));
+        languageIds.addAll(Set.of("af", "sq", "eu", "be", "bg", "ca", "zh-cn", "zh-tw", "hr", "cs", "da", "nl", "nl-be", "nl-nl", "en", "en-au", "en-bz", "en-ca", "en-ie", "en-jm", "en-nz", "en-ph", "en-za", "en-tt", "en-gb", "en-us", "en-zw", "et", "fo", "fi", "fr", "fr-be", "fr-ca", "fr-fr", "fr-lu", "fr-mc", "fr-ch", "gl", "gd", "de", "de-at", "de-de", "de-li", "de-lu", "de-ch", "el", "haw", "hu", "is", "in", "ga", "it", "it-it", "it-ch", "ja", "ko", "mk", "no", "pl", "pt", "pt-br", "pt-pt", "ro", "ro-mo", "ro-ro", "ru", "ru-mo", "ru-ru", "sr", "sk", "sl", "es", "es-ar", "es-bo", "es-cl", "es-co", "es-cr", "es-do", "es-ec", "es-sv", "es-gt", "es-hn", "es-mx", "es-ni", "es-pa", "es-py", "es-pe", "es-pr", "es-es", "es-uy", "es-ve", "sv", "sv-fi", "sv-se", "tr", "uk"));
     }
+
+    // lazy mail validation (non rfc) TODO: replace with something better
+    private static final Pattern emailPattern = Pattern.compile("^([\\w-+]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]*)\\.([\\w\\d.]{2,}?)$");
 
     private final Document doc;
     private final Element channel;
@@ -218,8 +222,8 @@ public class RSS {
          * @return RSS builder
          */
         public Builder language(String value) {
-            if (!LANGUAGE_IDS.contains(value))
-                throw new IllegalArgumentException("Not a valid language id. Allowed values: " + String.join(", ", LANGUAGE_IDS));
+            if (!languageIds.contains(value))
+                throw new IllegalArgumentException("Not a valid language id. Allowed values: " + String.join(", ", languageIds));
             appendChild("language", value, channel, doc);
             return this;
         }
@@ -242,6 +246,7 @@ public class RSS {
          * @return RSS builder
          */
         public Builder managingEditor(String value) {
+            if (!emailPattern.matcher(value).matches()) throw new IllegalArgumentException("Not a valid email address.");
             appendChild("managingEditor", value, channel, doc);
             return this;
         }
@@ -253,6 +258,7 @@ public class RSS {
          * @return RSS builder
          */
         public Builder webMaster(String value) {
+            if (!emailPattern.matcher(value).matches()) throw new IllegalArgumentException("Not a valid email address.");
             appendChild("webMaster", value, channel, doc);
             return this;
         }
@@ -632,6 +638,7 @@ public class RSS {
          * @return Item builder
          */
         public Item author(String value) {
+            if (!emailPattern.matcher(value).matches()) throw new IllegalArgumentException("Not a valid email address.");
             appendChild("author", value, item, doc);
             return this;
         }
