@@ -1,6 +1,10 @@
 # rssgen
 
-### A generator for RSS 2.0 conform xml files.
+[![maven central](https://maven-badges.herokuapp.com/maven-central/cc.neckbeard/rssgen/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cc.neckbeard/rssgen)
+
+A generator for RSS 2.0 conform xml files.
+
+---
 
 Just about compliant with the RSS 2.0 specification.
 
@@ -13,7 +17,7 @@ Implemented as single class file with zero external dependencies.
 This [example code](./src/test/java/cc/neckbeard/rssgen/Example.java):
 
 ```java
-        RSS rss = RSS.Builder
+        RSS rss=RSS.Builder
         .getInstance()
         .title("Example News Headlines")
         .link(new URL("https://news.example.org/"))
@@ -30,7 +34,7 @@ This [example code](./src/test/java/cc/neckbeard/rssgen/Example.java):
         .link(new URL("https://scriptingnews.userland.com/backissues/2002/09/29#reallyEarlyMorningNocoffeeNotes"))
         .guid(new URL("https://scriptingnews.userland.com/backissues/2002/09/29#reallyEarlyMorningNocoffeeNotes"))
         .pubDate(RSS.Date.of("Sun, 29 Sep 2002 11:13:10 GMT"))
-        .source("Scripting News", new URL("http://static.userland.com/gems/backend/rssTwoExample2.xml"))
+        .source("Scripting News",new URL("http://static.userland.com/gems/backend/rssTwoExample2.xml"))
         .build();
 
         rss.addItem()
@@ -38,16 +42,17 @@ This [example code](./src/test/java/cc/neckbeard/rssgen/Example.java):
         .link(new URL("https://rachelbythebay.com/w/2020/10/27/argv/"))
         .guid(new URL("https://rachelbythebay.com/w/2020/10/27/argv/"))
         .category("sysadmin war stories")
-        .source("rachelbythebay : Writing", new URL("https://rachelbythebay.com/w/atom.xml"))
+        .source("rachelbythebay : Writing",new URL("https://rachelbythebay.com/w/atom.xml"))
         .build();
 
-        rss.writeFile(new File("rss.xml"), 1);
+        rss.writeFile(new File("rss.xml"),1);
 ```
 
 Produces the following output:
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
     <channel>
         <title>Example News Headlines</title>
         <link>https://news.example.org/</link>
@@ -78,4 +83,4 @@ Produces the following output:
 
 ---
 
-[RSS 2.0 specification](https://validator.w3.org/feed/docs/rss2.html) ([mirror](https://www.rssboard.org/rss-specification), [mirror](https://cyber.harvard.edu/rss/rss.html))
+For more information, check the: [RSS 2.0 specification](https://validator.w3.org/feed/docs/rss2.html) ([mirror](https://www.rssboard.org/rss-specification), [mirror](https://cyber.harvard.edu/rss/rss.html))
