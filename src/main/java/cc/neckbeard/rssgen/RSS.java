@@ -83,6 +83,7 @@ public class RSS {
         }
         if (indent > 0) {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            //noinspection HttpUrlsUsage
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
         }
         try {
@@ -229,9 +230,7 @@ public class RSS {
          *
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String)
-         * @see cc.neckbeard.rssgen.RSS.Item#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
-         * @see cc.neckbeard.rssgen.RSS.Item#category(String)
          */
         public Builder category(String value, String domain) {
             var element = appendChild("category", value, channel, doc);
@@ -246,9 +245,7 @@ public class RSS {
          *
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String)
-         * @see cc.neckbeard.rssgen.RSS.Item#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
-         * @see cc.neckbeard.rssgen.RSS.Item#category(String)
          */
         public Builder category(String value, URL domain) {
             return category(value, domain.toString());
@@ -259,9 +256,7 @@ public class RSS {
          *
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
-         * @see cc.neckbeard.rssgen.RSS.Item#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
-         * @see cc.neckbeard.rssgen.RSS.Item#category(String)
          */
         public Builder category(String value) {
             return category(value, (String) null);
@@ -469,6 +464,8 @@ public class RSS {
         /**
          * The title of the item.
          * At least one of title or description must be present.
+         * @param value title
+         * @return Item builder
          */
         public Item title(String value) {
             appendChild("title", value, item, doc);
@@ -478,6 +475,8 @@ public class RSS {
 
         /**
          * The URL of the item.
+         * @param value url
+         * @return Item builder
          */
         public Item link(URL value) {
             appendChild("link", value.toString(), item, doc);
@@ -487,6 +486,8 @@ public class RSS {
         /**
          * The item synopsis.
          * At least one of title or description must be present.
+         * @param value synopsis
+         * @return Item builder
          */
         public Item description(String value) {
             appendChild("description", value, item, doc);
@@ -496,6 +497,8 @@ public class RSS {
 
         /**
          * Email address of the author of the item.
+         * @param value email address
+         * @return Item builder
          */
         public Item author(String value) {
             appendChild("author", value, item, doc);
@@ -503,13 +506,12 @@ public class RSS {
         }
 
         /**
-         * Specify one or more categories that the channel belongs to. Follows the same rules as the item category.
+         * Specify one or more categories that the channel belongs to. Follows the same rules as the channel category.
          *
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String)
-         * @see cc.neckbeard.rssgen.RSS.Builder#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
-         * @see cc.neckbeard.rssgen.RSS.Builder#category(String)
+         * @return Item builder
          */
         public Item category(String value, String domain) {
             var element = appendChild("category", value, item, doc);
@@ -520,26 +522,24 @@ public class RSS {
         }
 
         /**
-         * Specify one or more categories that the channel belongs to. Follows the same rules as the item category.
+         * Specify one or more categories that the channel belongs to. Follows the same rules as the channel category.
          *
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String)
-         * @see cc.neckbeard.rssgen.RSS.Builder#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
-         * @see cc.neckbeard.rssgen.RSS.Builder#category(String)
+         * @return Item builder
          */
         public Item category(String value, URL domain) {
             return category(value, domain.toString());
         }
 
         /**
-         * Specify one or more categories that the channel belongs to. Follows the same rules as the item category.
+         * Specify one or more categories that the channel belongs to. Follows the same rules as the channel category.
          *
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Item#category(String, URL)
-         * @see cc.neckbeard.rssgen.RSS.Builder#category(String, String)
          * @see cc.neckbeard.rssgen.RSS.Builder#category(String, URL)
-         * @see cc.neckbeard.rssgen.RSS.Builder#category(String)
+         * @return Item builder
          */
         public Item category(String value) {
             return category(value, (String) null);
@@ -547,6 +547,8 @@ public class RSS {
 
         /**
          * URL of a page for comments relating to the item.
+         * @param value url
+         * @return Item builder
          */
         public Item comments(URL value) {
             appendChild("comments", value.toString(), item, doc);
@@ -556,8 +558,10 @@ public class RSS {
         /**
          * Describes a media object that is attached to the item.
          *
+         * @param url url to media file
          * @param length content length
-         * @param type   MIME type
+         * @param type MIME type
+         * @return Item builder
          */
         public Item enclosure(URL url, Integer length, String type) {
             var element = doc.createElement("enclosure");
@@ -570,6 +574,8 @@ public class RSS {
 
         /**
          * A URL that uniquely identifies the item.
+         * @param value url
+         * @return Item builder
          */
         public Item guid(URL value) {
             return guid(value.toString(), true);
@@ -578,7 +584,9 @@ public class RSS {
         /**
          * A string that uniquely identifies the item.
          *
-         * @param isPermaLink if true, value is an URL
+         * @param value unique identifier
+         * @param isPermaLink if true, value is an url
+         * @return Item builder
          */
         public Item guid(String value, boolean isPermaLink) {
             var element = appendChild("guid", value, item, doc);
@@ -590,6 +598,9 @@ public class RSS {
 
         /**
          * Indicates when the item was published.
+         *
+         * @param value rfc822 date
+         * @return Item builder
          */
         public Item pubDate(Date value) {
             appendChild("pubDate", value.rfc822, item, doc);
@@ -598,6 +609,10 @@ public class RSS {
 
         /**
          * The RSS channel that the item came from.
+         *
+         * @param value name of source
+         * @param url url to source rss feed
+         * @return Item builder
          */
         public Item source(String value, URL url) {
             var element = appendChild("source", value, item, doc);
@@ -643,6 +658,9 @@ public class RSS {
 
         /**
          * Stores {@link java.lang.String} as RFC822 date.
+         *
+         * @param raw valid rfc822 formatted date
+         * @return rfc822 date
          */
         public static Date of(String raw) {
             return new Date(raw);
@@ -650,6 +668,9 @@ public class RSS {
 
         /**
          * Converts {@link java.util.Date} to RFC822 date.
+         *
+         * @param date timestamp
+         * @return rfc822 date
          */
         public static Date of(java.util.Date date) {
             return new Date(date);
@@ -657,6 +678,9 @@ public class RSS {
 
         /**
          * Converts {@link java.time.Instant} to RFC822 date.
+         *
+         * @param instant timestamp
+         * @return rfc822 date
          */
         public static Date of(Instant instant) {
             return new Date(instant);
@@ -664,6 +688,8 @@ public class RSS {
 
         /**
          * Stores a RFC822 date of the current time.
+         *
+         * @return rfc822 date
          */
         public static Date now() {
             return new Date(new java.util.Date());
