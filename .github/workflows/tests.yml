@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        java: [ 8, 11, 16 ]
+        java: [ 8, 11, 17 ]
       fail-fast: true
 
     steps:
@@ -22,15 +22,9 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'adopt'
+          distribution: 'zulu'
           check-latest: true
-
-      - name: Cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: '${{ runner.os }}-gradle-${{ hashFiles(''**/*.gradle'') }}'
-          restore-keys: '${{ runner.os }}-gradle'
+          cache: 'maven'
 
       - name: Test
         run: mvn --batch-mode --show-version --errors test --file pom.xml
